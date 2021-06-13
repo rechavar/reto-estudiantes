@@ -29,7 +29,6 @@ def train(config_file: str):
     split = "train"
     X, y = _get_dataset(_load_config(config_file, "data"), splits=[split])[split]
     estimator = model.build_estimator(estimator_config)
-    print(X.shape)
     estimator.fit(X, y)
     output_dir = _load_config(config_file, "export")["output_dir"]
     version = _save_versioned_estimator(estimator, estimator_config, output_dir)
