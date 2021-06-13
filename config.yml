@@ -1,0 +1,25 @@
+estimator:
+  - name: random-forest-classifier
+    params:      
+      class_weight: balanced_subsample
+
+data:
+  filepath: ./dataset/train_classification.csv
+
+metrics:
+  - name: mean absolute error
+    params: {}
+
+search:
+  jobs: -1
+  grid:
+    - name: random-forest-regressor
+      params:
+        n_estimators: [50, 100, 200]
+        max_depth: [null, 10, 20, 30, 60]
+
+export:
+  output_dir: models
+
+reports:
+  dir: ./reports
