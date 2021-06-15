@@ -8,9 +8,10 @@ import pandas as pd
 from sklearn.base import BaseEstimator, RegressorMixin, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
+from sklearn.cluster import KMeans
 
 
 EstimatorConfig = t.List[t.Dict[str, t.Any]]
@@ -30,17 +31,7 @@ def build_estimator(config: EstimatorConfig):
 
 def get_estimator_mapping():
     return {
-        "random-forest-classifier": RandomForestClassifier
+        "random-forest-classifier": RandomForestClassifier,
+        "KMeans": KMeans,
+        "logistic_regression": LogisticRegression
     }
-
-
-class AgeExtractor(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X = X.copy()
-        X["HouseAge"] = X["YrSold"] - X["YearBuilt"]
-        X["RemodAddAge"] = X["YrSold"] - X["YearRemodAdd"]
-        X["GarageAge"] = X["YrSold"] - X["GarageYrBlt"]
-        return X

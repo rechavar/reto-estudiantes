@@ -1,0 +1,3 @@
+- hparams:
+    solver: newton-cg
+  name: logistic_regression

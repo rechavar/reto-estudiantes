@@ -1,0 +1,3 @@
+- hparams:
+    n_init: 20
+  name: KMeans

@@ -1,0 +1,4 @@
+- name: KMeans
+  params:
+    n_clusters: 2
+    n_init: 20
