@@ -22,7 +22,7 @@ def build_estimator(config: EstimatorConfig):
     steps = []
     for step in config:
         name = step["name"]
-        hparams = step.get("hparams", {})
+        hparams = step.get("params", {})
         estimator = estimator_mapping[name](**hparams)
         steps.append((name, estimator))
     model = Pipeline(steps)

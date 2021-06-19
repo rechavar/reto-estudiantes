@@ -26,18 +26,19 @@ app = typer.Typer()
 @app.command()
 def train(config_file: str):
     estimator_config = _load_config(config_file, "estimator")
+    stage = _load_config(config_file, "stage")
     split = "train"
-    X, y = _get_dataset(_load_config(config_file, "data"), splits=[split])[split]
+    X, y = _get_dataset(_load_config(config_file, "data"), splits=[split], stage = stage)[split]
     estimator = model.build_estimator(estimator_config)
     estimator.fit(X, y)
     output_dir = _load_config(config_file, "export")["output_dir"]
     version = _save_versioned_estimator(estimator, estimator_config, output_dir)
 
 
-def _get_dataset(data_config, splits):
+def _get_dataset(data_config, splits, stage):
     filepath = data_config["filepath"]
     reader = partial(pd.read_csv, filepath_or_buffer=filepath)
-    return data.get_dataset(reader=reader, splits=splits)
+    return data.get_dataset(reader=reader, splits=splits, stage = stage)
 
 
 def _save_versioned_estimator(

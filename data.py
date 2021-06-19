@@ -19,9 +19,10 @@ class DatasetReader(te.Protocol):
 SplitName = te.Literal["train", "test"]
 
 
-def get_dataset(reader: DatasetReader, splits: t.Iterable[SplitName]):
+def get_dataset(reader: DatasetReader, splits: t.Iterable[SplitName], stage: str):
     df_orginal = reader()
-    df = clean_dataset(df_orginal)
+    clean_functions = get_stage()
+    df = clean_functions[stage](df_orginal)
     y = df_orginal["y"]
     X = df
     X_train, X_test, y_train, y_test = train_test_split(
@@ -33,8 +34,26 @@ def get_dataset(reader: DatasetReader, splits: t.Iterable[SplitName]):
 def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     cleaning_fn = _chain(
         [
-             _fix_data_frame_cat,
              _add_new_features,
+             _fix_data_frame_cat,
+             _fix_data_frame_con
+
+        ]
+    )
+    df = cleaning_fn(df)
+    return df
+    
+def clean_dataset_h3(df: pd.DataFrame):
+    pass
+
+def clean_dataset_h2(df: pd.DataFrame):
+    pass
+
+def clean_dataset_h1(df: pd.DataFrame) -> pd.DataFrame:
+    cleaning_fn = _chain(
+        [
+             _add_new_features_h1,
+             _fix_data_frame_cat,
              _fix_data_frame_con
 
         ]
@@ -54,17 +73,28 @@ def _chain(functions: t.List[t.Callable[[pd.DataFrame], pd.DataFrame]]):
 def _add_new_features(df):
     df['new_feature_1'] = np.where(df['thalachh'] > 130, 0, np.where(df['oldpeak'] == 0, 1, 0))
     df['new_feature_2'] = np.where(df['thalachh'] > 130, 0, np.where(df['exng_1'] == 0, 1, 0))
+
+    return df
+
+def _add_new_features_h1(df):
+    df['new_feature_1'] = np.where(df['thalachh'] > 130, 0, np.where(df['oldpeak'] == 0, 1, 0))
+    df['new_feature_2'] = np.where(df['thalachh'] > 130, 0, np.where(df['exng'] == 0, 1, 0))
+    df['new_feature_chol_vobs'] = ((df.chol - df.chol.min())/df.chol.max()) * abs(df.caa - 3)
+
     return df
 
 
 def _fix_data_frame_cat(df):
+    print(df.columns)
     to_get_dummies_cols = get_categorical_column_names()
     df_cat_dummies = pd.get_dummies(df[to_get_dummies_cols], columns= to_get_dummies_cols)
     df_cat_dummies
 
     continius_cols = get_numeric_column_names()
     
-    return pd.concat([df[continius_cols], df_cat_dummies], axis = 1)
+    df = pd.concat([df.drop(to_get_dummies_cols, axis = 1), df_cat_dummies], axis = 1)
+    print(df.columns)
+    return df
 
 def _fix_data_frame_con(df):
 
@@ -111,3 +141,11 @@ def get_categorical_variables_values_mapping() -> t.Dict[str, t.Sequence[str]]:
         "caa": ("0", "1", "2", "3"),
         "thall": ("0", "1","2","3"),
          }
+
+def get_stage()-> t.Dict[str, t.Sequence[str]]:
+    return{
+        "h_0" : clean_dataset,
+        "h_1" : clean_dataset_h1,
+        "h_2" : clean_dataset_h2,
+        "h_3" : clean_dataset_h3,
+    }
