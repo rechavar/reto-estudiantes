@@ -34,6 +34,7 @@ def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     cleaning_fn = _chain(
         [
              _fix_data_frame_cat,
+             _add_new_features,
              _fix_data_frame_con
 
         ]
@@ -49,6 +50,11 @@ def _chain(functions: t.List[t.Callable[[pd.DataFrame], pd.DataFrame]]):
         return df
 
     return helper
+
+def _add_new_features(df):
+    df['new_feature_1'] = np.where(df['thalachh'] > 130, 0, np.where(df['oldpeak'] == 0, 1, 0))
+    df['new_feature_2'] = np.where(df['thalachh'] > 130, 0, np.where(df['exng'] == 0, 1, 0))
+    return df
 
 
 def _fix_data_frame_cat(df):
