@@ -111,12 +111,11 @@ def eval(
     config_file: str,
     model_version: str,
     splits: t.List[str] = ["test"],
-    stage = stage,
 ):
     output_dir = _load_config(config_file, "export")["output_dir"]
     saved_model = os.path.join(output_dir, model_version, "model.joblib")
     estimator = joblib.load(saved_model)
-    dataset = _get_dataset(_load_config(config_file, "data"), splits=splits)
+    dataset = _get_dataset(_load_config(config_file, "data"), splits=splits, , stage = stage)
     report = defaultdict(list)
     all_metrics = _load_config(config_file, "metrics")
     for name, (X, y) in dataset.items():
