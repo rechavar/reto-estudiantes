@@ -9,7 +9,8 @@ estimator:
     params:
       random_state: 0
 
-stage: h_0    
+stage: 
+  name: h_0    
 
 data:
   filepath: ./dataset/train_classification.csv

@@ -85,7 +85,6 @@ def _add_new_features_h1(df):
 
 
 def _fix_data_frame_cat(df):
-    print(df.columns)
     to_get_dummies_cols = get_categorical_column_names()
     df_cat_dummies = pd.get_dummies(df[to_get_dummies_cols], columns= to_get_dummies_cols)
     df_cat_dummies
@@ -93,7 +92,6 @@ def _fix_data_frame_cat(df):
     continius_cols = get_numeric_column_names()
     
     df = pd.concat([df.drop(to_get_dummies_cols, axis = 1), df_cat_dummies], axis = 1)
-    print(df.columns)
     return df
 
 def _fix_data_frame_con(df):
