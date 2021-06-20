@@ -97,7 +97,7 @@ def _fix_data_frame_cat(df):
 def _fix_data_frame_con(df):
 
     sc = StandardScaler()
-    cols_to_scale = ['thalachh', 'age', 'chol', 'trtbps']
+    cols_to_scale = ['thalachh', 'chol', 'trtbps']
     df[cols_to_scale] = sc.fit_transform(df[cols_to_scale])
 
     return df
