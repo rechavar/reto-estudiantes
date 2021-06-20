@@ -44,7 +44,17 @@ def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     return df
     
 def clean_dataset_h3(df: pd.DataFrame):
-    pass
+    cleaning_fn = _chain(
+        [
+            _fix_data_frame_con_h2,
+            _add_new_features_h3,
+            _fix_data_frame_cat
+
+
+        ]
+    )
+    df = cleaning_fn(df)
+    return df
 
 def clean_dataset_h2(df: pd.DataFrame):
     cleaning_fn = _chain(
@@ -99,7 +109,13 @@ def _add_new_features_h2(df):
     df['new_feature_op_r'] = df.oldpeak * df.restecg
 
     return df
+    
+def _add_new_features_h3(df):
+    df = _add_new_features(df)
 
+    df['new_feature_bpthall'] = df.trtbps * (df.thall)
+
+    return df
 
 def _fix_data_frame_cat(df):
     to_get_dummies_cols = get_categorical_column_names()
