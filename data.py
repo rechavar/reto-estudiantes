@@ -80,8 +80,8 @@ def _chain(functions: t.List[t.Callable[[pd.DataFrame], pd.DataFrame]]):
     return helper
 
 def _add_new_features(df):
-    df['new_feature_1'] = np.where(df['thalachh'] < 130, np.where(df['oldpeak'] == 0, 0, 0.5), np.where(df['oldpeak'] == 0, 1, 0))
-    df['new_feature_2'] = np.where(df['thalachh'] < 130, np.where(df['exng'] == 0, 0, 0.5), np.where(df['exng'] == 0, 1, 0))
+    df['new_feature_1'] = np.where(df['thalachh'] < 130, 0, np.where(df['oldpeak'] == 0, 1, 0))
+    df['new_feature_2'] = np.where(df['thalachh'] < 130, 0, np.where(df['exng'] == 0, 1, 0))
 
     return df
 
