@@ -47,7 +47,16 @@ def clean_dataset_h3(df: pd.DataFrame):
     pass
 
 def clean_dataset_h2(df: pd.DataFrame):
-    pass
+    cleaning_fn = _chain(
+        [
+            _fix_data_frame_cat,
+            _fix_data_frame_con_h2,
+            _add_new_features_h2
+
+        ]
+    )
+    df = cleaning_fn(df)
+    return df
 
 def clean_dataset_h1(df: pd.DataFrame) -> pd.DataFrame:
     cleaning_fn = _chain(
@@ -71,8 +80,8 @@ def _chain(functions: t.List[t.Callable[[pd.DataFrame], pd.DataFrame]]):
     return helper
 
 def _add_new_features(df):
-    df['new_feature_1'] = np.where(df['thalachh'] < 130, 0, np.where(df['oldpeak'] == 0, 0, 1))
-    df['new_feature_2'] = np.where(df['thalachh'] < 130, 0, np.where(df['exng'] == 0, 0, 1))
+    df['new_feature_1'] = np.where(df['thalachh'] < 130, np.where(df['oldpeak'] == 0, 0, 0.5), np.where(df['oldpeak'] == 0, 1, 0))
+    df['new_feature_2'] = np.where(df['thalachh'] < 130, np.where(df['exng'] == 0, 0, 0.5), np.where(df['exng'] == 0, 1, 0))
 
     return df
 
@@ -80,6 +89,13 @@ def _add_new_features_h1(df):
     df = _add_new_features(df)
 
     df['new_feature_chol_vobs'] = ((df.chol - df.chol.min())/df.chol.max()) * abs(df.caa - 3)
+
+    return df
+
+def _add_new_features_h2(df):
+    df = _add_new_features(df)
+
+    df['new_feature_chol_vobs'] = df.oldpeak * (df.restecg_1 + df.restecg_2)
 
     return df
 
@@ -98,6 +114,14 @@ def _fix_data_frame_con(df):
 
     sc = StandardScaler()
     cols_to_scale = ['thalachh', 'chol', 'trtbps']
+    df[cols_to_scale] = sc.fit_transform(df[cols_to_scale])
+
+    return df
+
+def _fix_data_frame_con_h2(df):
+
+    sc = StandardScaler()
+    cols_to_scale = ['thalachh', 'chol', 'trtbps', 'oldpeak']
     df[cols_to_scale] = sc.fit_transform(df[cols_to_scale])
 
     return df
