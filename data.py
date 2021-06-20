@@ -49,13 +49,14 @@ def clean_dataset_h3(df: pd.DataFrame):
 def clean_dataset_h2(df: pd.DataFrame):
     cleaning_fn = _chain(
         [
-            _fix_data_frame_cat,
             _fix_data_frame_con_h2,
-            _add_new_features_h2
+            _add_new_features_h2,
+            _fix_data_frame_cat
 
         ]
     )
     df = cleaning_fn(df)
+    df = df.drop(['restecg_0', 'restecg_1', 'restecg_2'], axis = 1)
     return df
 
 def clean_dataset_h1(df: pd.DataFrame) -> pd.DataFrame:
@@ -95,7 +96,7 @@ def _add_new_features_h1(df):
 def _add_new_features_h2(df):
     df = _add_new_features(df)
 
-    df['new_feature_chol_vobs'] = df.oldpeak * (df.restecg_1 + df.restecg_2)
+    df['new_feature_op_r'] = df.oldpeak * df.restecg
 
     return df
 
@@ -103,9 +104,6 @@ def _add_new_features_h2(df):
 def _fix_data_frame_cat(df):
     to_get_dummies_cols = get_categorical_column_names()
     df_cat_dummies = pd.get_dummies(df[to_get_dummies_cols], columns= to_get_dummies_cols)
-    df_cat_dummies
-
-    continius_cols = get_numeric_column_names()
     
     df = pd.concat([df.drop(to_get_dummies_cols, axis = 1), df_cat_dummies], axis = 1)
     return df
@@ -134,7 +132,7 @@ def _fix_unhandled_nulls(df):
 
 def get_categorical_column_names() -> t.List[str]:
      return (
-         "sex,cp,fbs,restecg,exng,slp,caa,thall"
+         "sex,cp,fbs,restecg,exng,slp,thall"
         
      ).split(",")
 
@@ -145,7 +143,7 @@ def get_binary_column_names() -> t.List[str]:
 
 def get_numeric_column_names() -> t.List[str]:
     return (
-        "age,trtbps,chol,thalachh,oldpeak"
+        "age,trtbps,chol,caa,thalachh,oldpeak"
     ).split(",")
 
 
@@ -160,7 +158,6 @@ def get_categorical_variables_values_mapping() -> t.Dict[str, t.Sequence[str]]:
         "cp": ("0","1","2","3"),
         "restecg": ("0","1","2"),
         "slp": ("0","1","2"),
-        "caa": ("0", "1", "2", "3"),
         "thall": ("0", "1","2","3"),
          }
 
