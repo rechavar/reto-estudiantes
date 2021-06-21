@@ -5,9 +5,9 @@ estimator:
   # - name: KMeans
   #   params:
   #     n_clusters: 2
-  - name: logistic_regression
+  - name: base_line
     params:
-      random_state: 0
+      {}
 
 stage: 
   name: h_0    
